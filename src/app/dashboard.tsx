@@ -1,7 +1,7 @@
 import { GlassView } from 'expo-glass-effect';
 import { Image } from 'expo-image';
 import { SymbolView, type SFSymbol } from 'expo-symbols';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -170,6 +170,7 @@ function NavItem({ label, symbol, active, theme }: { label: string; symbol: SFSy
 
 export default function DashboardScreen() {
   const isDark = useColorScheme() === 'dark';
+  const [weather, setWeather] = useState<{ temperature: number; feelsLike: number }>();
   const theme: Theme = isDark
     ? {
         background: '#001532',
@@ -190,6 +191,16 @@ export default function DashboardScreen() {
         accent: '#087F92',
       };
 
+  useEffect(() => {
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=33.0198&longitude=-96.6989&current=temperature_2m,apparent_temperature&temperature_unit=fahrenheit')
+      .then((response) => response.json())
+      .then(({ current }) => setWeather({
+        temperature: Math.round(current.temperature_2m),
+        feelsLike: Math.round(current.apparent_temperature),
+      }))
+      .catch(() => setWeather(undefined));
+  }, []);
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]} edges={['top']}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -197,6 +208,23 @@ export default function DashboardScreen() {
           <Text style={[styles.eyebrow, { color: theme.accent }]}>OAKS OF PLANO</Text>
           <Text style={[styles.title, { color: theme.text }]}>Good afternoon</Text>
           <Text style={[styles.subtitle, { color: theme.secondary }]}>Everything important, in one place.</Text>
+        </View>
+
+        <View style={styles.quickInfo}>
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoLabel, { color: theme.accent }]}>PLANO WEATHER</Text>
+            <Text style={[styles.infoValue, { color: theme.text }]}>
+              {weather ? `${weather.temperature}°` : 'Loading…'}
+            </Text>
+            <Text style={[styles.infoDetail, { color: theme.secondary }]}>
+              {weather ? `Feels like ${weather.feelsLike}°` : 'Current conditions'}
+            </Text>
+          </View>
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoLabel, { color: theme.accent }]}>NEARBY</Text>
+            <Text style={[styles.infoValue, { color: theme.text }]}>Walmart</Text>
+            <Text style={[styles.infoDetail, { color: theme.secondary }]}>Closes 11 PM · 425 Coit Rd</Text>
+          </View>
         </View>
 
         <View>
@@ -238,6 +266,11 @@ const styles = StyleSheet.create({
   eyebrow: { fontSize: 12, fontWeight: '800', letterSpacing: 1.2 },
   title: { fontSize: 32, lineHeight: 38, fontWeight: '800', letterSpacing: -0.6 },
   subtitle: { fontSize: 17, lineHeight: 24 },
+  quickInfo: { flexDirection: 'row', gap: 10 },
+  infoCard: { flex: 1, minHeight: 106, borderRadius: 18, borderWidth: 1, padding: 14, justifyContent: 'center' },
+  infoLabel: { fontSize: 11, fontWeight: '800', letterSpacing: 0.8 },
+  infoValue: { fontSize: 22, lineHeight: 28, fontWeight: '800', marginTop: 4 },
+  infoDetail: { fontSize: 12, lineHeight: 17, marginTop: 2 },
   sectionTitle: { fontSize: 21, lineHeight: 27, fontWeight: '800' },
   apps: { gap: 10, paddingTop: 10 },
   app: { minWidth: 118, minHeight: 66, borderRadius: 16, borderWidth: 1, padding: 12, justifyContent: 'center' },
