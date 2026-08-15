@@ -1,7 +1,7 @@
 import { Animated, Easing, Pressable, ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { useEffect, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Image } from 'expo-image';
+import Svg, { Circle, Path } from 'react-native-svg';
 
 type Provider = 'Apple' | 'Google' | 'Facebook';
 
@@ -51,6 +51,17 @@ function ProviderButton({ provider }: { provider: Provider }) {
       </View>
       <Text style={[styles.buttonLabel, provider === 'Google' && styles.googleLabel]}>{palette.label}</Text>
     </Pressable>
+  );
+}
+
+function KonnectionsMark({ size = 108 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 1024 1024">
+      <Path d="M164 90H318L370 142V832L327 878H164Z" fill="#0B2347" />
+      <Path d="M524 144H875L873 245L744 374L691 438L603 526L523 513L501 434L574 351L654 272L733 182H524Z" fill="#0E9FB9" />
+      <Path d="M563 573L643 520L721 586V621L820 701L903 793V878H746L704 833L666 822L662 788L551 676Z" fill="#0B2347" />
+      <Circle cx="503" cy="514" r="49" fill="#0B2347" />
+    </Svg>
   );
 }
 
@@ -184,23 +195,7 @@ export default function AuthScreen() {
             />
           </View>
           <View style={styles.markCluster}>
-            <View style={[styles.markGlow, { backgroundColor: theme.accentSoft }]} />
-            <View
-              style={[
-                styles.markCard,
-                {
-                  backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#FFFFFF',
-                  borderColor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(29, 166, 200, 0.14)',
-                  shadowColor: theme.accent,
-                },
-              ]}>
-              <Image
-                source={require('../../assets/images/login-mark.png')}
-                style={styles.logo}
-                contentFit="contain"
-                transition={0}
-              />
-            </View>
+            <KonnectionsMark size={96} />
           </View>
           <Text style={[styles.title, { color: theme.text }]}>Get ready to konnect.</Text>
           <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
@@ -302,32 +297,10 @@ const styles = StyleSheet.create({
     opacity: 0.42,
   },
   markCluster: {
-    width: 176,
-    height: 176,
+    width: 120,
+    height: 120,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  markGlow: {
-    position: 'absolute',
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-  },
-  markCard: {
-    width: 130,
-    height: 130,
-    borderRadius: 32,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowOpacity: 0.22,
-    shadowOffset: { width: 0, height: 14 },
-    shadowRadius: 28,
-    elevation: 6,
-  },
-  logo: {
-    width: 108,
-    height: 108,
   },
   title: {
     textAlign: 'center',
