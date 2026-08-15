@@ -1,5 +1,3 @@
-/// <reference types="expo-router/types" />
+/// <reference types="expo/types" />
 
-declare module '*.css';
-declare module '*.module.css';
-declare module '@/global.css';
+// NOTE: This file should not be edited and should be in your git ignore
