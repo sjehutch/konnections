@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Path } from 'react-native-svg';
@@ -25,12 +26,13 @@ const providerStyles: Record<Provider, { label: string; badge: string; iconBg: s
   },
 };
 
-function ProviderButton({ provider }: { provider: Provider }) {
+function ProviderButton({ provider, onPress }: { provider: Provider; onPress?: () => void }) {
   const palette = providerStyles[provider];
 
   return (
     <Pressable
       accessibilityRole="button"
+      onPress={onPress}
       style={({ pressed }) => [
         styles.button,
         { backgroundColor: palette.badge, borderColor: pressed ? '#D9E2F2' : 'transparent' },
@@ -65,6 +67,7 @@ function KonnectionsMark({ size = 108, navy = '#0B2347' }: { size?: number; navy
 }
 
 export default function AuthScreen() {
+  const router = useRouter();
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
   const theme = isDark
@@ -122,7 +125,7 @@ export default function AuthScreen() {
         </View>
 
         <View style={styles.stack}>
-          <ProviderButton provider="Apple" />
+          <ProviderButton provider="Apple" onPress={() => router.replace('/dashboard')} />
           <ProviderButton provider="Google" />
           <ProviderButton provider="Facebook" />
         </View>
