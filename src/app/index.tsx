@@ -1,5 +1,4 @@
-import { Animated, Easing, Pressable, ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
-import { useEffect, useRef } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Path } from 'react-native-svg';
 
@@ -54,13 +53,13 @@ function ProviderButton({ provider }: { provider: Provider }) {
   );
 }
 
-function KonnectionsMark({ size = 108 }: { size?: number }) {
+function KonnectionsMark({ size = 108, navy = '#0B2347' }: { size?: number; navy?: string }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 1024 1024">
-      <Path d="M164 90H318L370 142V832L327 878H164Z" fill="#0B2347" />
-      <Path d="M524 144H875L873 245L744 374L691 438L603 526L523 513L501 434L574 351L654 272L733 182H524Z" fill="#0E9FB9" />
-      <Path d="M563 573L643 520L721 586V621L820 701L903 793V878H746L704 833L666 822L662 788L551 676Z" fill="#0B2347" />
-      <Circle cx="503" cy="514" r="49" fill="#0B2347" />
+      <Path d="M227 207H340L400 267V756L340 817H227Z" fill={navy} />
+      <Path d="M682 207H797V338L601 529L497 415Z" fill="#0E9FB9" />
+      <Path d="M612 531L800 712V817H680L525 660V610Z" fill={navy} />
+      <Circle cx="506" cy="516" r="65" fill={navy} />
     </Svg>
   );
 }
@@ -68,82 +67,19 @@ function KonnectionsMark({ size = 108 }: { size?: number }) {
 export default function AuthScreen() {
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
-  const rays = useRef(new Animated.Value(0)).current;
-  const cloud = useRef(new Animated.Value(0)).current;
   const theme = isDark
     ? {
         background: '#001532',
         text: '#FFFFFF',
         textSecondary: '#B9C2D4',
-        accent: '#F7B84B',
         accentSoft: 'rgba(247, 184, 75, 0.22)',
-        cloud: 'rgba(255,255,255,0.16)',
-        cloudSoft: 'rgba(255,255,255,0.10)',
       }
     : {
         background: '#F5F8FB',
         text: '#10213D',
         textSecondary: '#5C667A',
-        accent: '#F2B84B',
         accentSoft: 'rgba(242, 184, 75, 0.18)',
-        cloud: 'rgba(255,255,255,0.88)',
-        cloudSoft: 'rgba(255,255,255,0.60)',
       };
-
-  useEffect(() => {
-    const rayLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(rays, {
-          toValue: 1,
-          duration: 2400,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(rays, {
-          toValue: 0,
-          duration: 2400,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    const cloudLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(cloud, {
-          toValue: 1,
-          duration: 5200,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(cloud, {
-          toValue: 0,
-          duration: 5200,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-
-    rayLoop.start();
-    cloudLoop.start();
-    return () => {
-      rayLoop.stop();
-      cloudLoop.stop();
-    };
-  }, [cloud, rays]);
-
-  const rayOpacity = rays.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.22, 0.44],
-  });
-  const rayScale = rays.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.96, 1.04],
-  });
-  const cloudX = cloud.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-8, 10],
-  });
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
@@ -154,48 +90,8 @@ export default function AuthScreen() {
         ]}
         showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <View style={styles.topArt} pointerEvents="none">
-            <Animated.View
-              style={[
-                styles.sunCore,
-                {
-                  backgroundColor: theme.accent,
-                  opacity: rayOpacity,
-                  transform: [{ scale: rayScale }],
-                },
-              ]}
-            />
-            <Animated.View
-              style={[
-                styles.rays,
-                {
-                  opacity: rayOpacity,
-                  transform: [{ scale: rayScale }],
-                  backgroundColor: theme.accentSoft,
-                },
-              ]}
-            />
-            <Animated.View
-              style={[
-                styles.cloudLeft,
-                {
-                  backgroundColor: theme.cloud,
-                  transform: [{ translateX: cloudX }],
-                },
-              ]}
-            />
-            <Animated.View
-              style={[
-                styles.cloudRight,
-                {
-                  backgroundColor: theme.cloudSoft,
-                  transform: [{ translateX: cloudX }],
-                },
-              ]}
-            />
-          </View>
           <View style={styles.markCluster}>
-            <KonnectionsMark size={96} />
+            <KonnectionsMark size={118} navy={isDark ? '#FFFFFF' : '#0B2347'} />
           </View>
           <Text style={[styles.title, { color: theme.text }]}>Get ready to konnect.</Text>
           <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
@@ -220,7 +116,7 @@ export default function AuthScreen() {
                   borderColor: theme.accentSoft,
                 },
               ]}>
-              <Text style={[styles.chipText, { color: theme.text }]}>Community updates</Text>
+              <Text style={[styles.chipText, { color: theme.text }]}>Stay connected</Text>
             </View>
           </View>
         </View>
@@ -257,44 +153,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     paddingTop: 6,
-  },
-  topArt: {
-    width: '100%',
-    height: 92,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: -8,
-  },
-  rays: {
-    position: 'absolute',
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    opacity: 0.3,
-  },
-  sunCore: {
-    position: 'absolute',
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-  },
-  cloudLeft: {
-    position: 'absolute',
-    top: 20,
-    left: 24,
-    width: 96,
-    height: 30,
-    borderRadius: 999,
-    opacity: 0.55,
-  },
-  cloudRight: {
-    position: 'absolute',
-    top: 12,
-    right: 30,
-    width: 74,
-    height: 26,
-    borderRadius: 999,
-    opacity: 0.42,
   },
   markCluster: {
     width: 120,
